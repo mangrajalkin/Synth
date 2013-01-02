@@ -26,30 +26,27 @@ SRCDIR = src
 BINDIR = bin
 INCLUDEDIR = include
 LIBDIRS = lib
-INCLUDEDIRS = $(INCLUDEDIR)
+INCLUDEDIRS = $(INCLUDEDIR) $(JDKHOME)/include $(JDKHOME)/include/linux $(JDKHOME)/include/win32
 
 LIBS = portaudio
 
 EXECUTABLE = $(PROJECT:%=$(BINDIR)/%)
 CC = g++
 LD = g++
-JAVAC = javac
+JAVAC = $(JDKHOME)/bin/javac
 CFLAGS = -c -Wall -std=gnu++0x $(INCLUDEDIRS:%=-I%)
 DLLFLAGS = -shared
 LDFLAGS = $(LIBDIRS:%=-L%) $(LIBS:%=-l%)
-JCLASSES = $(JSOURCES:%.java=$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class)
+JCLASSES = $(JSOURCES:%.java=$(BINDIR)/$(subst .,/,$(JPACKAGE))/%.class)
 OBJECTS = $(CSOURCES:%.cpp=$(BUILDDIR)/%.o)
 
 all: | $(BUILDDIR) $(OBJECTS) $(EXECUTABLE)
 
-dll: $(OBJECTS)
-	$(CC) $(DLLFLAGS) -o lib$(PROJECT).so $< $(LDFLAGS)
-	
 clean:
-	rm $(OBJECTS) $(JCLASSES)
+	rm $(OBJECTS)
 	
 run: all
-	cd $(BINDIR) & $(PROJECT)
+	cd $(BINDIR) && ./$(PROJECT) && cd ..
 	
 remake: clean all
 
@@ -62,7 +59,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(JNIHEADER)
 $(JNIHEADER): $(JCLASSES)
 	javah -classpath $(BUILDDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
 
-$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java
+$(BINDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java
 	$(JAVAC) -d $(BUILDDIR) $(SRCDIR)/*.java
 	
 $(BUILDDIR):
