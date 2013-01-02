@@ -49,7 +49,7 @@ clean:
 	rm $(OBJECTS) $(JCLASSES)
 	
 run: all
-	cd $(BINDIR) & $(EXECUTABLE)
+	cd $(BINDIR) & $(PROJECT)
 	
 remake: clean all
 
