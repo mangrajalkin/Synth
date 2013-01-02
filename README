@@ -1,0 +1,7 @@
+A simple modular syntesizer written in C++ and Java.
+
+This is a very basic side project of mine. Eventually I may fill it out enough to be a fully functional program, but more than likely it will remain an experiment.
+
+The GUI front-end is written in Java, using Swing and AWT event handlers.
+
+All the heavy lifting is taken care of through a C++ backend that relies very heavily on the PortAudio libraries for a cross-platform sound card pipeline.
