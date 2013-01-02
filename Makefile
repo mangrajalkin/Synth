@@ -1,6 +1,6 @@
 EXECUTABLE = Synth
 
-CSOURCES = test.cpp
+CSOURCES = Synth.cpp
 JSOURCES = Synth.java GUI.java UniversalListener.java
 JPACKAGE = com.mangrajalkin.synth
 JMAINCLASS = Synth
