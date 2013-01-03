@@ -66,7 +66,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(INCLUDEDIR)/$(JNIHEADER)
 	$(CC) $(CFLAGS) -o $@ $<
 
 $(INCLUDEDIR)/$(JNIHEADER): $(JCLASSES)
-	javah -classpath $(BINDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
+	$(JDKHOME)/bin/javah -classpath $(BINDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
 
 $(BINDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java
 	$(JAVAC) -d $(BINDIR) $(SRCDIR)/*.java
