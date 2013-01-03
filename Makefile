@@ -16,6 +16,7 @@
 PROJECT = Synth
 
 CSOURCES = Synth.cpp
+LIBSOURCES = libsynth.cpp
 JSOURCES = Synth.java GUI.java UniversalListener.java
 JPACKAGE = com.mangrajalkin.synth
 JMAINCLASS = Synth
@@ -25,25 +26,32 @@ BUILDDIR = build
 SRCDIR = src
 BINDIR = bin
 INCLUDEDIR = include
-LIBDIRS = lib
+LIBDIRS = lib $(JDKHOME)/jre/lib/i386/client
 INCLUDEDIRS = $(INCLUDEDIR) $(JDKHOME)/include $(JDKHOME)/include/linux $(JDKHOME)/include/win32
 
-LIBS = portaudio
+MAINLIBS = jvm
+LIBLIBBS = portaudio
 
+JAR = $(BINDIR)/$(PROJECT)GUI.jar
 
 ifdef SystemRoot
+LIB = $(BINDIR)/libsynth.dll
 EXECUTABLE = $(PROJECT:%=$(BINDIR)/%).exe
 else
+LIB = $(BINDIR)/libsynth.so
 EXECUTABLE = $(PROJECT:%=$(BINDIR)/%)
 endif
+
 CC = g++
 LD = g++
 JAVAC = $(JDKHOME)/bin/javac
 CFLAGS = -c -Wall -std=gnu++0x $(INCLUDEDIRS:%=-I%)
-DLLFLAGS = -shared
-LDFLAGS = $(LIBDIRS:%=-L%) $(LIBS:%=-l%)
-JCLASSES = $(JSOURCES:%.java=$(BINDIR)/$(subst .,/,$(JPACKAGE))/%.class)
+LIBFLAGS = -shared
+MAINLDFLAGS = $(LIBDIRS:%=-L%) $(MAINLIBS:%=-l%)
+LIBLDFLAGS = $(LIBDIRS:%=-L%) $(LIBLIBS:%=-l%)
+JCLASSES = $(JSOURCES:%.java=$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class)
 OBJECTS = $(CSOURCES:%.cpp=$(BUILDDIR)/%.o)
+LIBOBJECTS = $(LIBSOURCES:%.cpp=$(BUILDDIR)/%.o)
 
 all: | $(BUILDDIR) $(OBJECTS) $(EXECUTABLE)
 
@@ -59,21 +67,30 @@ endif
 	
 remake: clean all
 
-$(EXECUTABLE): | $(BINDIR) $(OBJECTS)
-	$(LD) $(OBJECTS) -o $@ $(LDFLAGS)
+$(EXECUTABLE): | $(BINDIR) $(OBJECTS) $(LIB)
+	$(LD) $(OBJECTS) -o $@ $(MAINLDFLAGS)
+
+$(LIB): $(LIBOBJECTS)
+	$(LD) $(LIBOBJECTS) -o $@ $(LIBLDFLAGS) $(LIBFLAGS)
 	
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(INCLUDEDIR)/$(JNIHEADER)
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(INCLUDEDIR)/$(JNIHEADER): $(JCLASSES)
-	$(JDKHOME)/bin/javah -classpath $(BINDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
+$(INCLUDEDIR)/$(JNIHEADER): $(JAR)
+	$(JDKHOME)/bin/javah -classpath $(BUILDDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
 
-$(BINDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java
-	$(JAVAC) -d $(BINDIR) $(SRCDIR)/*.java
+$(JAR): $(JCLASSES) | $(BINDIR)
+	$(JDKHOME)/bin/jar -cvf $(JAR) -C $(BUILDDIR) com
+
+$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java | $(BUILDDIR)
+	$(JAVAC) -d $(BUILDDIR) $(SRCDIR)/*.java
 	
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
 
 $(BINDIR):
 	mkdir $(BINDIR)
+
+$(BUILDDIR)/lib: | $(BUILDDIR)
+	mkdir $(BUILDDIR)/lib
 
