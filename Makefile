@@ -1,15 +1,15 @@
 # This file is part of Synth.
-#
+
 # Synth is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+
 # Synth is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
+
 # You should have received a copy of the GNU General Public License
 # along with Synth.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -30,7 +30,12 @@ INCLUDEDIRS = $(INCLUDEDIR) $(JDKHOME)/include $(JDKHOME)/include/linux $(JDKHOM
 
 LIBS = portaudio
 
+
+ifdef SystemRoot
+EXECUTABLE = $(PROJECT:%=$(BINDIR)/%).exe
+else
 EXECUTABLE = $(PROJECT:%=$(BINDIR)/%)
+endif
 CC = g++
 LD = g++
 JAVAC = $(JDKHOME)/bin/javac
@@ -46,21 +51,25 @@ clean:
 	rm $(OBJECTS)
 	
 run: all
+ifdef SystemRoot
+	cd $(BINDIR) && $(PROJECT) && cd ..	
+else
 	cd $(BINDIR) && ./$(PROJECT) && cd ..
+endif
 	
 remake: clean all
 
-$(EXECUTABLE): | $(BINDIR) $(A_OBJECTS)
+$(EXECUTABLE): | $(BINDIR) $(OBJECTS)
 	$(LD) $(OBJECTS) -o $@ $(LDFLAGS)
 	
-$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(JNIHEADER)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(INCLUDEDIR)/$(JNIHEADER)
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(JNIHEADER): $(JCLASSES)
-	javah -classpath $(BUILDDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
+$(INCLUDEDIR)/$(JNIHEADER): $(JCLASSES)
+	javah -classpath $(BINDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
 
 $(BINDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java
-	$(JAVAC) -d $(BUILDDIR) $(SRCDIR)/*.java
+	$(JAVAC) -d $(BINDIR) $(SRCDIR)/*.java
 	
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
