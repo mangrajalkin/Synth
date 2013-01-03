@@ -26,11 +26,11 @@ BUILDDIR = build
 SRCDIR = src
 BINDIR = bin
 INCLUDEDIR = include
-LIBDIRS = lib $(JDKHOME)/jre/lib/i386/client
+LIBDIRS = lib $(JDKHOME)/jre/lib/i386/client $(JDKHOME)/lib
 INCLUDEDIRS = $(INCLUDEDIR) $(JDKHOME)/include $(JDKHOME)/include/linux $(JDKHOME)/include/win32
 
 MAINLIBS = jvm
-LIBLIBBS = portaudio
+LIBLIBS = portaudio
 
 JAR = $(BINDIR)/$(PROJECT)GUI.jar
 
