@@ -35,7 +35,7 @@ LIBLIBS = portaudio
 JAR = $(BINDIR)/$(PROJECT)GUI.jar
 
 ifdef SystemRoot
-LIB = $(BINDIR)/libsynth.dll
+LIB = $(BINDIR)/synth.dll
 EXECUTABLE = $(PROJECT:%=$(BINDIR)/%).exe
 else
 LIB = $(BINDIR)/libsynth.so
