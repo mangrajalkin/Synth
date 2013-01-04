@@ -1,7 +1,19 @@
 A simple modular syntesizer written in C++ and Java.
 
-This is a very basic side project of mine. Eventually I may fill it out enough to be a fully functional program, but more than likely it will remain an experiment.
+This is a very basic side project of mine. Eventually I may fill it out enough to be a fully
+functional program, but more than likely it will remain an experiment.
 
 The GUI front-end is written in Java, using Swing and AWT event handlers.
 
-All the heavy lifting is taken care of through a C++ backend that relies very heavily on the PortAudio libraries for a cross-platform sound card pipeline.
+All the heavy lifting is taken care of through a C++ backend that relies
+very heavily on the PortAudio libraries for a cross-platform sound card pipeline.
+
+The only dependancies are PortAudio and a JDK.
+
+PortAudio is fairly easy to include and link against in Windows and Linux, but the JDK is far
+more difficult.
+
+Before running make, you MUST set a JDKHOME environment variable pointing to your JDK.
+
+Before running the application, you will probably need to ammend your LD_LIBRARY_PATH variable with
+the location of libjvm.so, or your PATH variable with the location of jvm.dll.
