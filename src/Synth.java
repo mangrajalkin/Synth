@@ -25,11 +25,20 @@ public class Synth{
 	
 	static {System.loadLibrary("synth");}
 	
+	public static void main(){
+		main(new String[0]);
+	}
+
 	public static void main(String[] args){
 		Synth synth = new Synth();
 		UniversalListener listener = new UniversalListener(synth);
-		javax.swing.SwingUtilities.invokeLater(
+		//javax.swing.SwingUtilities.invokeLater(
+		Thread t = new Thread(
 			new GUI(listener, 48, 24));
+		t.start();
+		try{
+			t.join();
+		} catch (Exception e){}
 	}
 	
 	protected Synth(){

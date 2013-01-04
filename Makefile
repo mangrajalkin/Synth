@@ -26,7 +26,7 @@ BUILDDIR = build
 SRCDIR = src
 BINDIR = bin
 INCLUDEDIR = include
-LIBDIRS = lib $(JDKHOME)/jre/lib/i386/client $(JDKHOME)/lib
+LIBDIRS = lib $(JDKHOME)/jre/lib/i386/client $(JDKHOME)/jre/lib/amd64/server $(JDKHOME)/lib 
 INCLUDEDIRS = $(INCLUDEDIR) $(JDKHOME)/include $(JDKHOME)/include/linux $(JDKHOME)/include/win32
 
 MAINLIBS = jvm
@@ -45,7 +45,7 @@ endif
 CC = g++
 LD = g++
 JAVAC = $(JDKHOME)/bin/javac
-CFLAGS = -c -Wall -std=gnu++0x $(INCLUDEDIRS:%=-I%)
+CFLAGS = -c -fPIC -Wall -std=gnu++0x $(INCLUDEDIRS:%=-I%)
 LIBFLAGS = -shared
 MAINLDFLAGS = $(LIBDIRS:%=-L%) $(MAINLIBS:%=-l%)
 LIBLDFLAGS = $(LIBDIRS:%=-L%) $(LIBLIBS:%=-l%)
