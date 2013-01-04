@@ -30,20 +30,36 @@ public class GUI implements Runnable{
 		this.noteCount = noteCount;
 	}
 	
-	public void run(){	
+	public void run(){
+		// create a new frame for the program
 		JFrame frame = new JFrame("Ben's Awesome Software Synth");
+		// and a layered pane, so the black keys stay on top
 		JLayeredPane pane = new JLayeredPane();
+		// put the pane in the frame
 		frame.add(pane);
+		// allow focus for key event grabbing
 		frame.setFocusable(true);
+		// add the listener as a KeyListener
 		frame.addKeyListener(listener);
+		// insets to disable truncating key labels
 		Insets insets = new Insets(0, 0, 0, 0);
+		// keep track of white keys for placement
 		int whiteKeyCount = 0;
+		// create as many keys as requested
 		for (int i=startingNote;i<=startingNote+noteCount;i++){
-			boolean whiteKey = false;		
+			// default to black keys
+			boolean whiteKey = false;
+			// create JButton for each key
 			JButton key = new JButton();
+			// add the listener as a Mouse and KeyListeners
 			key.addMouseListener(listener);
 			key.addKeyListener(listener);
+			// add a client property to each key to keep track
+			// of the MIDI note number
 			key.putClientProperty("MIDI", i);
+			// figure out which note the current
+			// index applies to and set text and color
+			// for white keys
 			switch(i%12){
 			case  0:
 				key.setText("C");
@@ -85,22 +101,32 @@ public class GUI implements Runnable{
 				break;
 			}
 			if (whiteKey){
+				// if it's a white key, decorate as such
 				key.setBackground(WHITE);
 				key.setMargin(insets);
 				key.setVerticalAlignment(SwingConstants.BOTTOM);
+				// and place in the current position
 				key.setLocation(whiteKeyCount * 20, 0);
 				key.setSize(20, 100);
 				pane.add(key, 0, -1);
+				// and increment the current position
 				whiteKeyCount++;
 			} else {
+				// if it's a black key, decorate as such
 				key.setBackground(BLACK);
 				key.setSize(15, 70);
+				// and place in the current position
 				key.setLocation((whiteKeyCount * 20) - 10, 0);
 				pane.add(key, 1, -1);
+				// NOTE: we don't increment the position, since the black
+				// keys overlap the white keys
 			}
 		}
+		// disable default close operation and add listener so we 
+		// can close the synth libraries properly
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(listener);
+		// set the frame size and show the GUI
 		frame.setSize(400, 300);
 		frame.setVisible(true);
 	}
