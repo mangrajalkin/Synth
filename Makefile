@@ -32,14 +32,12 @@ MAINLIBS = jvm
 LIBLIBS = portaudio
 
 JAR = $(BINDIR)/$(PROJECT).jar
-MANIFEST = MANIFEST.MF
+MANIFEST = $(BUILDDIR)/MANIFEST.MF
 
 ifdef SystemRoot
 LIB = $(BINDIR)/synth.dll
-EXECUTABLE = $(PROJECT:%=$(BINDIR)/%).exe
 else
 LIB = $(BINDIR)/libsynth.so
-EXECUTABLE = $(PROJECT:%=$(BINDIR)/%)
 endif
 
 CC = g++
@@ -56,19 +54,20 @@ LIBOBJECTS = $(LIBSOURCES:%.cpp=$(BUILDDIR)/%.o)
 all: $(JAR) $(LIB)
 
 clean:
-	rm $(OBJECTS)
-	
-run: all
 ifdef SystemRoot
-	cd $(BINDIR) && $(JDKHOME)/bin/java -jar $(PROJECT).jar && cd ..	
+	rmdir $(BUILDDIR) /s /q
+	rmdir $(INCLUDEDIR) /s /q
 else
-	cd $(BINDIR) && $(JDKHOME)/bin/java -jar ./$(PROJECT).jar && cd ..
+	rm -R $(BUILDDIR) $(INCLUDEDIR)
 endif
-	
+
+run: all
+	cd $(BINDIR) && $(JDKHOME)/bin/java -jar $(PROJECT).jar && cd ..	
+
 remake: clean all
 
 # Target to link the native library
-$(LIB): $(LIBOBJECTS) $(BINDIR)
+$(LIB): $(LIBOBJECTS) $(BINDIR)/.timestamp
 	$(LD) $(LIBOBJECTS) -o $@ $(LIBLDFLAGS) $(LIBFLAGS)
 
 # Target to compile the C++ objects
@@ -80,31 +79,30 @@ $(INCLUDEDIR)/$(JNIHEADER): $(JCLASSES)
 	$(JDKHOME)/bin/javah -classpath $(BUILDDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
 
 # Target to create the jar file.
-$(JAR): $(MANIFEST) $(JCLASSES) $(BINDIR)
+$(JAR): $(MANIFEST) $(JCLASSES) $(BINDIR)/.timestamp
 	$(JDKHOME)/bin/jar -cvfm $(JAR) $(MANIFEST) -C $(BUILDDIR) com
 
 # Target to create the jar Manifest file
-$(MANIFEST):
+$(MANIFEST): $(BUILDDIR)/.timestamp
 	echo "Manifest-Version: 1.0" > $(MANIFEST)
 	echo "Main-Class: $(JPACKAGE).$(JMAINCLASS)" >> $(MANIFEST)
-	echo "" >> $(MANIFEST)
+	@echo "" >> $(MANIFEST)
 
 # Target to compile the java .class files.
 # All the classes must be compiled at once,
 # due to interdependancies.
-$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java $(BUILDDIR)
+$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java $(BUILDDIR)/.timestamp
 	$(JAVAC) -d $(BUILDDIR) $(SRCDIR)/*.java
 
 # Targets to create output directories.
 # javah and some compilers break without
 # having the target directories already
 # in existance.
-$(BUILDDIR):
+$(BUILDDIR)/.timestamp:
 	mkdir $(BUILDDIR)
+	@echo "" > $(BUILDDIR)/.timestamp
 
-$(BINDIR):
+$(BINDIR)/.timestamp:
 	mkdir $(BINDIR)
-
-$(BUILDDIR)/lib: $(BUILDDIR)
-	mkdir $(BUILDDIR)/lib
+	@echo "" > $(BINDIR)/.timestamp
 
