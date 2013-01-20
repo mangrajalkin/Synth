@@ -19,18 +19,36 @@ package com.mangrajalkin.synth;
 import javax.swing.*;
 import java.awt.*;
 import static java.awt.Color.*;
+/**
+ * Main GUI for the program
+ * 
+ * @author Ben Kern <Benjamin.L.Kern@gmail.com>
+ */
 public class GUI implements Runnable{
+	/** Listener to handle GUI events */
 	private UniversalListener listener;
+	/** MIDI number of the lowest note on the keyboard */
 	private int startingNote;
+	/** Number of notes on the keyboard, measured in half-intervals */
 	private int noteCount;
 	
-	// Simple constructor
+	/**
+	 * Class constructor.
+	 * Generates a keyboard layout based on input paramters
+	 *
+	 * @param	listener	listener to handle events
+	 * @param	startingNote	MIDI number of the lowest note on the keyboard
+	 * @param	noteCount	number of notes on the keyboard, measured in half-intervals
+	 */
 	protected GUI(UniversalListener listener, int startingNote, int noteCount){
 		this.listener = listener;
 		this.startingNote = startingNote;
 		this.noteCount = noteCount;
 	}
 	
+	/**
+	 * Creates and displays the GUI.
+	 */
 	public void run(){
 		// create a new frame for the program
 		JFrame frame = new JFrame("Ben's Awesome Software Synth");

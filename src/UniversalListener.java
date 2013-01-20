@@ -22,9 +22,21 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import java.util.Map;
 import java.util.HashMap;
+/**
+ * Listener to handle GUI events
+ *
+ * @author Ben Kern <Benjamin.L.Kern@gmail.com>
+ */
 public class UniversalListener extends WindowAdapter implements MouseListener, KeyListener{
+	/** Parent Synth to pass events back to */
 	private Synth synth;
+	/** Map to hold key bindings */
 	private Map<Integer, Integer> keyBindings;
+	/**
+	 * Class constructor
+	 *
+	 * @param	synth	parent Synth object to pass events back to
+	 */
 	protected UniversalListener(Synth synth){
 		this.synth = synth;
 		keyBindings = new HashMap<Integer, Integer>();
@@ -43,24 +55,40 @@ public class UniversalListener extends WindowAdapter implements MouseListener, K
 		keyBindings.put(79, 64);
 		keyBindings.put(80, 65);
 	}
+
+	/**
+	 * Handle window close events.
+	 * Cleans up the synth native library before
+	 * the GUI closes.
+	 *
+	 * @param	evt	the window event that triggered this function
+	 */
 	@Override
-	public void windowClosing(WindowEvent e){
-		if (JOptionPane.showOptionDialog(null,
-				"Are you sure you want to exit?",
-				"Confirm Exit",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				null,null,null) == 0){
-			synth.cleanup();
-			System.exit(0);
-		}
+	public void windowClosing(WindowEvent evt){
+		synth.cleanup();
+		System.exit(0);
 	}
+
+	/**
+	 * Handle keypress events.
+	 * Checks binding map for note.
+	 * If it exists, turn the note on.
+	 *
+	 * @param	evt	the key event that triggered this function
+	 */
 	public void keyPressed(KeyEvent evt){
 		Integer note = keyBindings.get(evt.getKeyCode());
 		if (note != null)
 			synth.noteOn(note);
 	}
-	
+
+	/**
+	 * Handle keyup events.
+	 * Checks binding map for note.
+	 * If it exists, turn note off.
+	 *
+	 * @param	evt	the key event that triggered this function
+	 */
 	public void keyReleased(KeyEvent evt){
 		Integer note = keyBindings.get(evt.getKeyCode());
 		if (note != null)
@@ -70,12 +98,26 @@ public class UniversalListener extends WindowAdapter implements MouseListener, K
 	public void keyTyped(KeyEvent evt){}
 	
 	public void mouseClicked(MouseEvent evt){}
-	
+
+	/**
+	 * Handle click events on keyboard keys.
+	 * Retrieves the MIDI note number from the {@link JComponent} client property
+	 * from the event's parent and turns that note on.
+	 *
+	 * @param	evt	the mouse event that triggered this function
+	 */
 	public void mousePressed(MouseEvent evt){
 		synth.noteOn((Integer)
 			((JComponent)(evt.getComponent())).getClientProperty("MIDI"));
 	}
-	
+
+	/**
+	 * Handle mouseup events on keyboard keys.
+	 * Retrieves the MIDI note number from the {@link JComponent} client property
+	 * from the event's parent and turns that note off.
+	 *
+	 * @param	evt	the mouse event that triggered this function
+	 */
 	public void mouseReleased(MouseEvent evt){
 		synth.noteOff((Integer)
 			((JComponent)(evt.getComponent())).getClientProperty("MIDI"));

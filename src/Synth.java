@@ -23,6 +23,11 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+/**
+ * Main class for Synth program.
+ *
+ * @author	Ben Kern <Benjamin.L.Kern@gmail.com>
+ */
 public class Synth{
 
 	// native library method declarations
@@ -31,6 +36,16 @@ public class Synth{
 	protected native void noteOn(int midiNumber);
 	protected native void noteOff(int midiNumber);
 
+	/**
+ 	 * Program entry point. 
+ 	 * This method tries to load the native library from
+ 	 * the library paths, and if it fails, it will try
+ 	 * to find the library and create a new JVM instance
+ 	 * passing the library path to the new JVM via a
+ 	 * -Djava.library.path argument.
+ 	 * 
+ 	 * @param	args	command line arguments. Not used at the moment.
+ 	 */ 
 	public static void main(String[] args){
 		// try to load the native library
 		try{
@@ -109,7 +124,11 @@ public class Synth{
 		javax.swing.SwingUtilities.invokeLater(
 			new GUI(listener, 48, 24));
 	}
-	
+
+	/**
+	 * Class constructor.
+	 * Responsible for starting the native library
+	 */ 
 	protected Synth(){
 		// Try to start up the native synth library
 		if (startup() != 0){
@@ -117,7 +136,9 @@ public class Synth{
 			System.exit(0);
 		}
 	}
-	
+	/**
+	 * Shuts down the native library
+	 */
 	protected void cleanup(){
 		// try to clean up the synth library
 		if (shutdown() != 0)
