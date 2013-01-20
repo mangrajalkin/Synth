@@ -10,10 +10,7 @@ very heavily on the PortAudio libraries for a cross-platform sound card pipeline
 
 The only dependancies are PortAudio and a JDK.
 
-PortAudio is fairly easy to include and link against in Windows and Linux, but the JDK is far
-more difficult.
+PortAudio is fairly easy to include and link against in Windows and Linux.
 
 Before running make, you MUST set a JDKHOME environment variable pointing to your JDK.
 
-Before running the application, you will probably need to ammend your LD_LIBRARY_PATH variable with
-the location of libjvm.so, or your PATH variable with the location of jvm.dll.
