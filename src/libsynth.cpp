@@ -16,7 +16,7 @@
  *
  */
 
-#include "libsynth.h"
+#include "libsynth.hpp"
 /*
  * Main callback for sound data. Called by PortAudio as needed.
  * Don't do any malloc() or free() stuff here. Needs to be as fast
