@@ -15,7 +15,6 @@
 
 PROJECT = Synth
 
-CSOURCES = Synth.cpp
 LIBSOURCES = libsynth.cpp
 JSOURCES = Synth.java GUI.java UniversalListener.java
 JPACKAGE = com.mangrajalkin.synth
@@ -32,7 +31,8 @@ INCLUDEDIRS = $(INCLUDEDIR) $(JDKHOME)/include $(JDKHOME)/include/linux $(JDKHOM
 MAINLIBS = jvm
 LIBLIBS = portaudio
 
-JAR = $(BINDIR)/$(PROJECT)GUI.jar
+JAR = $(BINDIR)/$(PROJECT).jar
+MANIFEST = MANIFEST.MF
 
 ifdef SystemRoot
 LIB = $(BINDIR)/synth.dll
@@ -53,44 +53,58 @@ JCLASSES = $(JSOURCES:%.java=$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class)
 OBJECTS = $(CSOURCES:%.cpp=$(BUILDDIR)/%.o)
 LIBOBJECTS = $(LIBSOURCES:%.cpp=$(BUILDDIR)/%.o)
 
-all: | $(BUILDDIR) $(OBJECTS) $(EXECUTABLE)
+all: $(JAR) $(LIB)
 
 clean:
 	rm $(OBJECTS)
 	
 run: all
 ifdef SystemRoot
-	cd $(BINDIR) && $(PROJECT) && cd ..	
+	cd $(BINDIR) && $(JDKHOME)/bin/java -jar $(PROJECT).jar && cd ..	
 else
-	cd $(BINDIR) && ./$(PROJECT) && cd ..
+	cd $(BINDIR) && $(JDKHOME)/bin/java -jar ./$(PROJECT).jar && cd ..
 endif
 	
 remake: clean all
 
-$(EXECUTABLE): | $(BINDIR) $(OBJECTS) $(LIB)
-	$(LD) $(OBJECTS) -o $@ $(MAINLDFLAGS)
-
-$(LIB): $(LIBOBJECTS)
+# Target to link the native library
+$(LIB): $(LIBOBJECTS) $(BINDIR)
 	$(LD) $(LIBOBJECTS) -o $@ $(LIBLDFLAGS) $(LIBFLAGS)
-	
+
+# Target to compile the C++ objects
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(INCLUDEDIR)/$(JNIHEADER)
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(INCLUDEDIR)/$(JNIHEADER): $(JAR)
+# Target to create the JNI header file.
+$(INCLUDEDIR)/$(JNIHEADER): $(JCLASSES)
 	$(JDKHOME)/bin/javah -classpath $(BUILDDIR) -d $(INCLUDEDIR) $(JPACKAGE).$(JMAINCLASS)
 
-$(JAR): $(JCLASSES) | $(BINDIR)
-	$(JDKHOME)/bin/jar -cvf $(JAR) -C $(BUILDDIR) com
+# Target to create the jar file.
+$(JAR): $(MANIFEST) $(JCLASSES) $(BINDIR)
+	$(JDKHOME)/bin/jar -cvfm $(JAR) $(MANIFEST) -C $(BUILDDIR) com
 
-$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java | $(BUILDDIR)
+# Target to create the jar Manifest file
+$(MANIFEST):
+	echo "Manifest-Version: 1.0" > $(MANIFEST)
+	echo "Main-Class: $(JPACKAGE).$(JMAINCLASS)" >> $(MANIFEST)
+	echo "" >> $(MANIFEST)
+
+# Target to compile the java .class files.
+# All the classes must be compiled at once,
+# due to interdependancies.
+$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class: $(SRCDIR)/%.java $(BUILDDIR)
 	$(JAVAC) -d $(BUILDDIR) $(SRCDIR)/*.java
-	
+
+# Targets to create output directories.
+# javah and some compilers break without
+# having the target directories already
+# in existance.
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
 
 $(BINDIR):
 	mkdir $(BINDIR)
 
-$(BUILDDIR)/lib: | $(BUILDDIR)
+$(BUILDDIR)/lib: $(BUILDDIR)
 	mkdir $(BUILDDIR)/lib
 

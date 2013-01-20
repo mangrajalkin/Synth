@@ -51,7 +51,7 @@ public class UniversalListener extends WindowAdapter implements MouseListener, K
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE,
 				null,null,null) == 0){
-			synth.shutdown();
+			synth.cleanup();
 			System.exit(0);
 		}
 	}

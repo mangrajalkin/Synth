@@ -24,6 +24,7 @@ public class GUI implements Runnable{
 	private int startingNote;
 	private int noteCount;
 	
+	// Simple constructor
 	protected GUI(UniversalListener listener, int startingNote, int noteCount){
 		this.listener = listener;
 		this.startingNote = startingNote;

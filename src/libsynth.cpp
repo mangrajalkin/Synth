@@ -129,22 +129,22 @@ void noteOff(int midiNumber){
 /*
  * JNI methods
  */
-JNIEXPORT jint JNICALL Java_com_mangrajalkin_synth_Synth_synthStartup
+JNIEXPORT jint JNICALL Java_com_mangrajalkin_synth_Synth_startup
    (JNIEnv *env, jobject obj){
 	return startup();
 }
 
-JNIEXPORT jint JNICALL Java_com_mangrajalkin_synth_Synth_synthShutdown
+JNIEXPORT jint JNICALL Java_com_mangrajalkin_synth_Synth_shutdown
    (JNIEnv *env, jobject obj){
 	return shutdown();
 }
 
-JNIEXPORT void JNICALL Java_com_mangrajalkin_synth_Synth_synthNoteOn
+JNIEXPORT void JNICALL Java_com_mangrajalkin_synth_Synth_noteOn
    (JNIEnv *env, jobject obj, jint midiNumber){
 	noteOn(midiNumber);
 }
 
-JNIEXPORT void JNICALL Java_com_mangrajalkin_synth_Synth_synthNoteOff
+JNIEXPORT void JNICALL Java_com_mangrajalkin_synth_Synth_noteOff
    (JNIEnv *env, jobject obj, jint midiNumber){
 	noteOff(midiNumber);
 }
