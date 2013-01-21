@@ -84,9 +84,9 @@ $(JAR): $(MANIFEST) $(JCLASSES) $(BINDIR)/.timestamp
 
 # Target to create the jar Manifest file
 $(MANIFEST): $(BUILDDIR)/.timestamp
-	echo "Manifest-Version: 1.0" > $(MANIFEST)
-	echo "Main-Class: $(JPACKAGE).$(JMAINCLASS)" >> $(MANIFEST)
-	@echo "" >> $(MANIFEST)
+	echo Manifest-Version: 1.0 > $(MANIFEST)
+	echo Main-Class: $(JPACKAGE).$(JMAINCLASS) >> $(MANIFEST)
+#	@echo "" >> $(MANIFEST)
 
 # Target to compile the java .class files.
 # All the classes must be compiled at once,
