@@ -143,8 +143,7 @@ public class GUI implements Runnable{
 		}
 		// disable default close operation and add listener so we 
 		// can close the synth libraries properly
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(listener);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// set the frame size and show the GUI
 		frame.setSize(400, 300);
 		frame.setVisible(true);

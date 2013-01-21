@@ -27,7 +27,7 @@ import java.util.HashMap;
  *
  * @author Ben Kern <Benjamin.L.Kern@gmail.com>
  */
-public class UniversalListener extends WindowAdapter implements MouseListener, KeyListener{
+public class UniversalListener implements MouseListener, KeyListener{
 	/** Parent Synth to pass events back to */
 	private Synth synth;
 	/** Map to hold key bindings */
@@ -54,19 +54,6 @@ public class UniversalListener extends WindowAdapter implements MouseListener, K
 		keyBindings.put(57, 63);
 		keyBindings.put(79, 64);
 		keyBindings.put(80, 65);
-	}
-
-	/**
-	 * Handle window close events.
-	 * Cleans up the synth native library before
-	 * the GUI closes.
-	 *
-	 * @param	evt	the window event that triggered this function
-	 */
-	@Override
-	public void windowClosing(WindowEvent evt){
-		synth.cleanup();
-		System.exit(0);
 	}
 
 	/**

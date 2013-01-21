@@ -134,6 +134,13 @@ public class Synth{
 		if (startup() != 0){
 			System.out.println("Could not start synth library");
 			System.exit(0);
+		// if startup executed ok, add a shutdown hook for the library.
+		} else {
+			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+				public void run(){
+					cleanup();
+				}
+			}));
 		}
 	}
 	/**
