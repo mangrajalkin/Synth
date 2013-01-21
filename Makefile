@@ -43,8 +43,13 @@ endif
 CC = g++
 LD = g++
 JAVAC = $(JDKHOME)/bin/javac
+ifdef SystemRoot
+CFLAGS = -c -Wall -std=gnu++0x $(INCLUDEDIRS:%=-I%)
+LIBFLAGS = -shared -Wl,--kill-at
+else
 CFLAGS = -c -fPIC -Wall -std=gnu++0x $(INCLUDEDIRS:%=-I%)
 LIBFLAGS = -shared
+endif
 MAINLDFLAGS = $(LIBDIRS:%=-L%) $(MAINLIBS:%=-l%)
 LIBLDFLAGS = $(LIBDIRS:%=-L%) $(LIBLIBS:%=-l%)
 JCLASSES = $(JSOURCES:%.java=$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class)
