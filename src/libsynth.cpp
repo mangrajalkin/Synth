@@ -36,24 +36,22 @@ static int paCallback(
 	
 	for (i=0;i<framesPerBuffer;i++){
 	
-		float value = 0;
+		float value = 0.001;
 		int noteCount = 0;
 		for(int i=0;i<128;i++){
-			if (data->midiNotes[i]){
-				double amplitude = 1.0;
+			double amplitude = data->midiNotes[i]->envelope->amplitude;
+			if (amplitude > 0){
+				noteCount++;
 				double frequency = A * std::pow(2, (i-69.0)/12.0);
-				double omega = PI_2 * frequency;
+				double omega = TAO * frequency;
 				double phi = 0;
 				value += amplitude * std::sin((omega * data->time) + phi);
-				noteCount++;
 			}
+			data->midiNotes[i]->envelope->addTime(TIME_PER_FRAME);
 		}
-		if (noteCount > 0){
+		if (noteCount > 1)
 			value /= noteCount;
-			data->time += TIME_PER_FRAME;			
-		} else {
-			data->time = 0;
-		}
+		data->time += TIME_PER_FRAME;
 		*out++ = value;
 		*out++ = value;
 	}
@@ -83,6 +81,8 @@ int startup(){
 		cleanup();
 		return -4;
 	}
+	for (int i=0;i<128;i++)
+		data.midiNotes[i] = new Note(new Envelope(1.0, 1.0, 0.5, 1.0));
 	return 0;
 }
 
@@ -108,6 +108,9 @@ bool executedOk(PaError error){
 }
 
 int cleanup(){
+	for (int i=0;i<128;i++){
+		delete data.midiNotes[i];
+	}
 	PaError error = Pa_Terminate();
 	if (error != paNoError) {
 		std::cout << "PortAudio could not shut down properly: "
@@ -119,11 +122,11 @@ int cleanup(){
 }
 
 void noteOn(int midiNumber){
-	data.midiNotes.set(midiNumber);
+	data.midiNotes[midiNumber]->envelope->noteIsOn = true;
 }
 
 void noteOff(int midiNumber){
-	data.midiNotes.reset(midiNumber);
+	data.midiNotes[midiNumber]->envelope->noteIsOn = false;
 }
 
 /*

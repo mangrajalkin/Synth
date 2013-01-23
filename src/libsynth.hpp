@@ -16,25 +16,29 @@
  *
  */
 
-#ifndef LIBSYNTH_H
-#define LIBSYNTH_H
+#ifndef LIBSYNTH_HPP
+#define LIBSYNTH_HPP
 #include <iostream>
 #include <cmath>
 #include <bitset>
+#include <map>
 #include "portaudio.h"
+#include "Note.hpp"
+#include "Envelope.hpp"
 
 #include "com_mangrajalkin_synth_Synth.h"
 
 
 static double SAMPLE_RATE = 44100;
 static double PI = std::atan2(0,-1);
-static double PI_2 = PI * 2;
+static double TAO = PI * 2;
 static double TIME_PER_FRAME = 1 / SAMPLE_RATE;
 static double A = 440;
 
 typedef struct {
 	double time;
-	std::bitset<128> midiNotes;
+	// std::bitset<128> midiNotes;
+	Note *midiNotes[128];
 } paData;
 
 static paData data;

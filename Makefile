@@ -15,7 +15,7 @@
 
 PROJECT = Synth
 
-LIBSOURCES = libsynth.cpp
+LIBSOURCES = libsynth.cpp Note.cpp Envelope.cpp
 JSOURCES = Synth.java GUI.java UniversalListener.java
 JPACKAGE = com.mangrajalkin.synth
 JMAINCLASS = Synth
@@ -89,9 +89,8 @@ $(JAR): $(MANIFEST) $(JCLASSES) $(BINDIR)/.timestamp
 
 # Target to create the jar Manifest file
 $(MANIFEST): $(BUILDDIR)/.timestamp
-	echo Manifest-Version: 1.0 > $(MANIFEST)
-	echo Main-Class: $(JPACKAGE).$(JMAINCLASS) >> $(MANIFEST)
-#	@echo "" >> $(MANIFEST)
+	echo Manifest-Version: 1.0 > $@
+	echo Main-Class: $(JPACKAGE).$(JMAINCLASS) >> $@
 
 # Target to compile the java .class files.
 # All the classes must be compiled at once,
