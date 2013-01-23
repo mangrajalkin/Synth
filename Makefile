@@ -56,6 +56,9 @@ JCLASSES = $(JSOURCES:%.java=$(BUILDDIR)/$(subst .,/,$(JPACKAGE))/%.class)
 OBJECTS = $(CSOURCES:%.cpp=$(BUILDDIR)/%.o)
 LIBOBJECTS = $(LIBSOURCES:%.cpp=$(BUILDDIR)/%.o)
 
+#check if JDKHOME is defined
+$(if $(JDKHOME),,$(error ERROR: Please make sure environment variable "JDKHOME" is defined before running make))
+
 all: $(JAR) $(LIB)
 
 clean:
